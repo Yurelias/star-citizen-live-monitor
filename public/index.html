@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Citizen 4.8 - Notifications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 50px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .status-item {
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .status-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-value {
+            color: #667eea;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-subscribe {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-subscribe:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-subscribe:active {
+            transform: translateY(0);
+        }
+
+        .btn-rss {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-rss:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+        }
+
+        .btn-copy {
+            background: #4caf50;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .btn-copy:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .rss-link {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #666;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .features {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .features h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn-subscribe:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .status {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .status-item {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⭐ Star Citizen 4.8</h1>
+            <p>Soyez notifié automatiquement quand la version 4.8 est disponible</p>
+        </div>
+
+        <div class="status">
+            <div class="status-item">
+                <div class="status-label">Version Actuelle</div>
+                <div class="status-value" id="currentVersion">Vérification...</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">Statut</div>
+                <div class="status-value" id="statusBadge">⏳ En attente</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">Abonnés</div>
+                <div class="status-value" id="subscriberCount">-</div>
+            </div>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <form id="subscribeForm">
+            <div class="form-group">
+                <label for="email">Votre email Gmail</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="exemple@gmail.com" 
+                    required
+                >
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-subscribe">
+                    <span id="btnText">S'inscrire aux notifications</span>
+                </button>
+            </div>
+        </form>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p style="color: #666; margin-bottom: 10px;">ou</p>
+            <a href="/rss" class="btn-rss" style="text-decoration: none; display: inline-block;">📡 S'abonner au flux RSS</a>
+        </div>
+
+        <div>
+            <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">URL du flux RSS:</p>
+            <div class="rss-link" id="rssUrl">http://localhost:3000/rss</div>
+            <button type="button" class="btn-copy" onclick="copyToClipboard()">Copier l'URL</button>
+        </div>
+
+        <div class="features">
+            <h3>Comment ça marche?</h3>
+            <ul class="feature-list">
+                <li>Inscription gratuite et instantanée</li>
+                <li>Surveillance automatique de Star Citizen</li>
+                <li>Email de notification dès que 4.8 est disponible</li>
+                <li>Flux RSS compatible avec tous les lecteurs</li>
+                <li>Désinscription facile à tout moment</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Mise à jour automatique toutes les 5 minutes</p>
+            <p>Fait avec ❤️ pour la communauté Star Citizen</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('subscribeForm');
+        const emailInput = document.getElementById('email');
+        const alertDiv = document.getElementById('alert');
+        const btnText = document.getElementById('btnText');
+        const btn = document.querySelector('.btn-subscribe');
+
+        // Charger les stats au démarrage
+        updateStats();
+        setInterval(updateStats, 30000); // Mettre à jour toutes les 30 secondes
+
+        // Mettre à jour l'URL RSS selon le domaine
+        document.getElementById('rssUrl').textContent = window.location.origin + '/rss';
+
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+
+                document.getElementById('currentVersion').textContent = data.currentVersion || 'En cours...';
+                document.getElementById('subscriberCount').textContent = data.subscribers;
+
+                const badge = document.getElementById('statusBadge');
+                if (data.isAvailable) {
+                    badge.textContent = '✅ Disponible!';
+                    badge.style.color = '#4caf50';
+                } else {
+                    badge.textContent = '⏳ En attente';
+                    badge.style.color = '#ff9800';
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+
+            if (!email) {
+                showAlert('Veuillez entrer un email', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="loader"></span>Inscription en cours...';
+
+            try {
+                const response = await fetch('/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('✅ Inscription réussie! Vous recevrez un email dès que 4.8 sera disponible.', 'success');
+                    emailInput.value = '';
+                    updateStats();
+                } else {
+                    showAlert('❌ ' + data.error, 'error');
+                }
+            } catch (error) {
+                showAlert('❌ Erreur: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = 'S\'inscrire aux notifications';
+            }
+        });
+
+        function showAlert(message, type) {
+            alertDiv.textContent = message;
+            alertDiv.className = 'alert ' + type;
+            setTimeout(() => {
+                alertDiv.classList.remove(type);
+            }, 5000);
+        }
+
+        function copyToClipboard() {
+            const rssUrl = document.getElementById('rssUrl').textContent;
+            navigator.clipboard.writeText(rssUrl).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copié!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
